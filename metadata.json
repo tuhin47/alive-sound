@@ -1,0 +1,15 @@
+{
+  "name": "Alive Sound",
+  "description": "Generates silent sound to keep Bluetooth devices active",
+  "uuid": "alive-sound@example.com",
+  "shell-version": [
+    "40",
+    "41",
+    "42",
+    "43",
+    "44",
+    "45"
+  ],
+  "url": "https://github.com/tuhin47/alive-sound",
+  "version": 1
+} 
