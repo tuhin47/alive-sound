@@ -25,12 +25,12 @@ A GNOME Shell extension that generates silent sound to keep your Bluetooth devic
 
 2. Copy the extension to your GNOME extensions directory:
    ```bash
-   cp -r . ~/.local/share/gnome-shell/extensions/alive-sound@example.com
+   cp -r . ~/.local/share/gnome-shell/extensions/alive-sound@tuhintowhidul9@gmail.com
    ```
 
 3. Compile the GSettings schema:
    ```bash
-   cd ~/.local/share/gnome-shell/extensions/alive-sound@example.com
+   cd ~/.local/share/gnome-shell/extensions/alive-sound@tuhintowhidul9@gmail.com
    glib-compile-schemas schemas/
    ```
 
@@ -41,7 +41,7 @@ A GNOME Shell extension that generates silent sound to keep your Bluetooth devic
 5. Enable the extension:
    - Open GNOME Extensions app
    - Find "Alive Sound" and toggle it on
-   - Or use: `gnome-extensions enable alive-sound@example.com`
+   - Or use: `gnome-extensions enable alive-sound@tuhintowhidul9@gmail.com`
 
 ### Method 2: Using GNOME Extensions Website
 
@@ -155,7 +155,7 @@ gsettings set org.gnome.shell.extensions.alive-sound beep-duration 160
 
 3. Test the extension:
    ```bash
-   gnome-extensions enable alive-sound@example.com
+   gnome-extensions enable alive-sound@tuhintowhidul9@gmail.com
    ```
 
 4. Test notification functionality:

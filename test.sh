@@ -14,7 +14,7 @@ echo -e "${GREEN}Alive Sound Extension Test${NC}"
 echo "================================"
 
 # Check if extension is installed
-EXTENSION_NAME="alive-sound@example.com"
+EXTENSION_NAME="alive-sound@tuhintowhidul9@gmail.com"
 EXTENSIONS_DIR="$HOME/.local/share/gnome-shell/extensions"
 TARGET_DIR="$EXTENSIONS_DIR/$EXTENSION_NAME"
 

@@ -11,7 +11,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Extension details
-EXTENSION_NAME="alive-sound@example.com"
+EXTENSION_NAME="alive-sound@tuhintowhidul9@gmail.com"
 EXTENSIONS_DIR="$HOME/.local/share/gnome-shell/extensions"
 TARGET_DIR="$EXTENSIONS_DIR/$EXTENSION_NAME"
 

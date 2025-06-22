@@ -22,15 +22,27 @@ const AliveSoundIndicator = GObject.registerClass(
             // Add separator
             this.menu.addMenuItem(new imports.ui.popupMenu.PopupSeparatorMenuItem());
             
-            // Add test notification sound menu item
-            const testNotificationItem = new imports.ui.popupMenu.PopupMenuItem('Test Notification Sound');
-            testNotificationItem.connect('activate', () => {
-                this._playNotificationSound();
+            // Add Enable Sound Generation toggle
+            this._enableSoundItem = new imports.ui.popupMenu.PopupSwitchMenuItem('Enable Sound Generation', false);
+            this._enableSoundItem.connect('toggled', (item) => {
+                this._settings.set_boolean('enabled', item.state);
             });
-            this.menu.addMenuItem(testNotificationItem);
+            this.menu.addMenuItem(this._enableSoundItem);
+            
+            // Add Enable Notification Sound toggle
+            this._enableNotificationItem = new imports.ui.popupMenu.PopupSwitchMenuItem('Enable Notification Sound', false);
+            this._enableNotificationItem.connect('toggled', (item) => {
+                this._settings.set_boolean('beep-enabled', item.state);
+            });
+            this.menu.addMenuItem(this._enableNotificationItem);
 
             // Connect settings changes
+            this._settings.connect('changed::enabled', () => {
+                this._enableSoundItem.setToggleState(this._settings.get_boolean('enabled'));
+            });
+            
             this._settings.connect('changed::beep-enabled', () => {
+                this._enableNotificationItem.setToggleState(this._settings.get_boolean('beep-enabled'));
                 this._updateNotificationTimer();
             });
             
@@ -41,6 +53,10 @@ const AliveSoundIndicator = GObject.registerClass(
             // Initialize notification timer
             this._notificationTimer = null;
             this._updateNotificationTimer();
+            
+            // Load initial states
+            this._enableSoundItem.setToggleState(this._settings.get_boolean('enabled'));
+            this._enableNotificationItem.setToggleState(this._settings.get_boolean('beep-enabled'));
         }
 
         _playNotificationSound() {
