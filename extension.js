@@ -17,7 +17,11 @@ const AliveSoundIndicator = GObject.registerClass(
             }));
 
             // Add menu items
-            this.menu.addMenuItem(new imports.ui.popupMenu.PopupMenuItem('Alive Sound Extension'));
+            const settingsItem = new imports.ui.popupMenu.PopupMenuItem('Alive Sound Extension');
+            settingsItem.connect('activate', () => {
+                this._openSettings();
+            });
+            this.menu.addMenuItem(settingsItem);
             
             // Add separator
             this.menu.addMenuItem(new imports.ui.popupMenu.PopupSeparatorMenuItem());
@@ -57,6 +61,16 @@ const AliveSoundIndicator = GObject.registerClass(
             // Load initial states
             this._enableSoundItem.setToggleState(this._settings.get_boolean('enabled'));
             this._enableNotificationItem.setToggleState(this._settings.get_boolean('beep-enabled'));
+        }
+
+        _openSettings() {
+            try {
+                // Open the extension preferences using GNOME's extension preferences command
+                const uuid = ExtensionUtils.getCurrentExtension().metadata.uuid;
+                imports.misc.util.trySpawnCommandLine(`gnome-extensions prefs ${uuid}`);
+            } catch (error) {
+                log('Alive Sound: Failed to open settings: ' + error.message);
+            }
         }
 
         _playNotificationSound() {
