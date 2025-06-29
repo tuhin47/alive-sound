@@ -4,14 +4,16 @@ A GNOME Shell extension that generates silent sound to keep your Bluetooth devic
 
 ## Features
 
-- **Silent Sound Generation**: Creates a very low-volume audio stream that keeps your Bluetooth audio devices active
+- **Silent Sound Generation**: Creates a very low-volume 2-second audio stream that keeps your Bluetooth audio devices active
+- **Configurable Intervals**: Set custom intervals for both sound generation and notification sounds
 - **Notification Sound Option**: Optional periodic notification sounds using the included MP3 file
 - **Easy Toggle**: Simple on/off switch in the system tray
 - **Volume Control**: Adjustable volume level (default: very low to be inaudible)
-- **Interval Control**: Text input field to set notification interval in seconds
+- **Interval Control**: Text input fields to set both sound generation and notification intervals in seconds
 - **Test Notification Function**: Test notification sounds directly from the extension menu
 - **Automatic Startup**: Remembers your settings and starts automatically if enabled
 - **System Integration**: Clean integration with GNOME Shell
+- **Multiple Sound Generation Methods**: Uses sox, ffmpeg, or speaker-test for maximum compatibility
 
 ## Installation
 
@@ -52,20 +54,28 @@ A GNOME Shell extension that generates silent sound to keep your Bluetooth devic
 ## Usage
 
 1. **Enable the Extension**: The extension will appear as a speaker icon in your system tray
-2. **Toggle Sound Generation**: Click the speaker icon and toggle "Keep Bluetooth Alive"
+2. **Toggle Sound Generation**: Click the speaker icon and toggle "Enable Sound Generation"
 3. **Adjust Volume**: Use the volume slider to set the sound level (keep it very low for silence)
-4. **Enable Notification Sound**: Toggle the notification sound option in settings
-5. **Set Interval**: Enter the desired interval in seconds (e.g., 160 for every 160 seconds)
-6. **Test Notification**: Use the "Test Notification Sound" menu item to test the notification functionality
-7. **Settings**: Access additional settings through the menu
+4. **Set Sound Generation Interval**: Enter the desired interval in seconds for sound generation (e.g., 30 for every 30 seconds)
+5. **Enable Notification Sound**: Toggle the notification sound option in settings
+6. **Set Notification Interval**: Enter the desired interval in seconds for notifications (e.g., 160 for every 160 seconds)
+7. **Test Notification**: Use the "Test Notification Sound" menu item to test the notification functionality
+8. **Settings**: Access additional settings through the menu
 
 ## How It Works
 
-The extension creates a silent or very low-volume audio stream that:
+The extension creates a silent or very low-volume 2-second audio stream that:
 - Keeps your Bluetooth audio devices active
 - Prevents automatic disconnection due to inactivity
 - Uses minimal system resources
 - Is virtually inaudible when volume is set low
+- Can be configured to play at custom intervals (default: 30 seconds)
+
+**Sound Generation Feature:**
+- Generates a 2-second silent sound at specified intervals when enabled
+- Uses multiple methods for maximum compatibility: sox (primary), ffmpeg (fallback), speaker-test (last resort)
+- Interval can be set in seconds using a text input field (default: 30 seconds)
+- Volume control affects the generated sound level
 
 **Notification Sound Feature:**
 - Plays the included `notification.mp3` file at specified intervals when enabled
@@ -79,6 +89,7 @@ The extension creates a silent or very low-volume audio stream that:
 - GNOME Shell 40 or later
 - ALSA or PulseAudio sound system
 - `mpv` media player (recommended) or `aplay` command
+- `sox` (recommended), `ffmpeg`, or `speaker-test` for sound generation
 - `notification.mp3` file included with the extension
 
 ## Dependencies
@@ -86,13 +97,13 @@ The extension creates a silent or very low-volume audio stream that:
 Install required dependencies:
 ```bash
 # For Ubuntu/Debian
-sudo apt install mpv alsa-utils
+sudo apt install mpv alsa-utils sox ffmpeg
 
 # For Fedora
-sudo dnf install mpv alsa-utils
+sudo dnf install mpv alsa-utils sox ffmpeg
 
 # For Arch Linux
-sudo pacman -S mpv alsa-utils
+sudo pacman -S mpv alsa-utils sox ffmpeg
 ```
 
 ## Troubleshooting
@@ -108,6 +119,16 @@ sudo pacman -S mpv alsa-utils
 - Check if `aplay` is available as fallback: `which aplay`
 - Install ALSA utilities: `sudo apt install alsa-utils`
 - Check audio permissions and volume settings
+
+### Sound Generation Not Working
+- Check if `sox` is available: `which sox`
+- Install sox: `sudo apt install sox`
+- Check if `ffmpeg` is available as fallback: `which ffmpeg`
+- Install ffmpeg: `sudo apt install ffmpeg`
+- Check if `speaker-test` is available as last resort: `which speaker-test`
+- Install ALSA utilities: `sudo apt install alsa-utils`
+- Test sound generation: `./test_sound_generation.sh`
+- Ensure the sound generation interval is set to a valid number greater than 0
 
 ### Notification Sound Not Working
 - Test the notification functionality using the "Test Notification Sound" menu item
@@ -128,13 +149,15 @@ The extension stores settings in GSettings under `org.gnome.shell.extensions.ali
 
 - `enabled`: Boolean - Whether sound generation is enabled
 - `volume`: Double - Volume level (0.0 to 1.0)
+- `sound-interval`: Integer - Sound generation interval in seconds (default: 30)
 - `beep-enabled`: Boolean - Whether notification sound is enabled
-- `beep-duration`: Integer - Notification interval in seconds
+- `beep-duration`: Integer - Notification interval in seconds (default: 160)
 
 You can modify these using:
 ```bash
 gsettings set org.gnome.shell.extensions.alive-sound enabled true
 gsettings set org.gnome.shell.extensions.alive-sound volume 0.01
+gsettings set org.gnome.shell.extensions.alive-sound sound-interval 30
 gsettings set org.gnome.shell.extensions.alive-sound beep-enabled true
 gsettings set org.gnome.shell.extensions.alive-sound beep-duration 160
 ```
@@ -145,7 +168,7 @@ gsettings set org.gnome.shell.extensions.alive-sound beep-duration 160
 
 1. Install development dependencies:
    ```bash
-   sudo apt install gettext libglib2.0-dev mpv alsa-utils
+   sudo apt install gettext libglib2.0-dev mpv alsa-utils sox ffmpeg
    ```
 
 2. Compile the schema:
@@ -163,6 +186,11 @@ gsettings set org.gnome.shell.extensions.alive-sound beep-duration 160
    ./test_beep.sh
    ```
 
+5. Test sound generation functionality:
+   ```bash
+   ./test_sound_generation.sh
+   ```
+
 ### File Structure
 
 ```
@@ -174,6 +202,7 @@ alive-sound/
 ├── schemas/             # GSettings schemas
 │   └── org.gnome.shell.extensions.alive-sound.gschema.xml
 ├── test_beep.sh         # Notification sound test script
+├── test_sound_generation.sh  # Sound generation test script
 └── README.md           # This file
 ```
 

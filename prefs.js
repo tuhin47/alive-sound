@@ -42,37 +42,32 @@ const AliveSoundPrefsWidget = GObject.registerClass(
             });
             this.append(separator);
 
-            // Enable switch
-            const enableBox = new Gtk.Box({
+            // Enable notification sound switch
+            const notificationEnableBox = new Gtk.Box({
                 orientation: Gtk.Orientation.HORIZONTAL,
                 spacing: 12
             });
-
-            const enableLabel = new Gtk.Label({
-                label: 'Enable sound generation',
+            const notificationEnableLabel = new Gtk.Label({
+                label: 'Enable notification sound',
                 halign: Gtk.Align.START,
                 hexpand: true
             });
-
-            this._enableSwitch = new Gtk.Switch({
+            this._beepEnableSwitch = new Gtk.Switch({
                 halign: Gtk.Align.END
             });
-
-            enableBox.append(enableLabel);
-            enableBox.append(this._enableSwitch);
-            this.append(enableBox);
+            notificationEnableBox.append(notificationEnableLabel);
+            notificationEnableBox.append(this._beepEnableSwitch);
+            this.append(notificationEnableBox);
 
             // Volume adjustment
             const volumeBox = new Gtk.Box({
                 orientation: Gtk.Orientation.VERTICAL,
                 spacing: 6
             });
-
             const volumeLabel = new Gtk.Label({
-                label: 'Sound Volume',
+                label: 'Volume',
                 halign: Gtk.Align.START
             });
-
             this._volumeScale = new Gtk.Scale({
                 orientation: Gtk.Orientation.HORIZONTAL,
                 adjustment: new Gtk.Adjustment({
@@ -84,93 +79,56 @@ const AliveSoundPrefsWidget = GObject.registerClass(
                 digits: 2,
                 value_pos: Gtk.PositionType.RIGHT
             });
-
             volumeBox.append(volumeLabel);
             volumeBox.append(this._volumeScale);
             this.append(volumeBox);
 
-            // Notification sound section
-            const notificationSeparator = new Gtk.Separator({
-                orientation: Gtk.Orientation.HORIZONTAL
-            });
-            this.append(notificationSeparator);
-
-            // Notification enable switch
-            const notificationEnableBox = new Gtk.Box({
-                orientation: Gtk.Orientation.HORIZONTAL,
-                spacing: 12
-            });
-
-            const notificationEnableLabel = new Gtk.Label({
-                label: 'Enable notification sound',
-                halign: Gtk.Align.START,
-                hexpand: true
-            });
-
-            this._beepEnableSwitch = new Gtk.Switch({
-                halign: Gtk.Align.END
-            });
-
-            notificationEnableBox.append(notificationEnableLabel);
-            notificationEnableBox.append(this._beepEnableSwitch);
-            this.append(notificationEnableBox);
-
-            // Notification interval input
+            // Interval input
             const intervalBox = new Gtk.Box({
                 orientation: Gtk.Orientation.HORIZONTAL,
                 spacing: 12
             });
-
             const intervalLabel = new Gtk.Label({
-                label: 'Notification Interval (seconds)',
+                label: 'Interval (seconds)',
                 halign: Gtk.Align.START,
                 hexpand: true
             });
-
-            this._durationEntry = new Gtk.Entry({
-                text: '160',
+            this._intervalEntry = new Gtk.Entry({
+                text: '30',
                 width_chars: 10,
                 halign: Gtk.Align.END
             });
-
             intervalBox.append(intervalLabel);
-            intervalBox.append(this._durationEntry);
+            intervalBox.append(this._intervalEntry);
             this.append(intervalBox);
 
-            // Notification info label
-            const notificationInfoLabel = new Gtk.Label({
+            // Info label
+            const infoLabel = new Gtk.Label({
                 label: 'The notification sound will play every X seconds when enabled. The sound file is approximately 2 seconds long.',
                 wrap: true,
                 halign: Gtk.Align.START
             });
-            this.append(notificationInfoLabel);
+            this.append(infoLabel);
 
             // Connect signals
-            this._enableSwitch.connect('state-set', (widget, state) => {
-                this._settings.set_boolean('enabled', state);
-            });
-
-            this._volumeScale.connect('value-changed', (widget) => {
-                this._settings.set_double('volume', widget.get_value());
-            });
-
             this._beepEnableSwitch.connect('state-set', (widget, state) => {
                 this._settings.set_boolean('beep-enabled', state);
             });
-
-            this._durationEntry.connect('changed', (widget) => {
+            this._volumeScale.connect('value-changed', (widget) => {
+                this._settings.set_double('volume', widget.get_value());
+            });
+            this._intervalEntry.connect('changed', (widget) => {
                 const value = parseFloat(widget.get_text());
                 if (!isNaN(value) && value > 0) {
-                    this._settings.set_int('beep-duration', Math.floor(value));
+                    this._settings.set_int('interval', Math.floor(value));
                 }
             });
         }
 
         _loadSettings() {
-            this._enableSwitch.set_active(this._settings.get_boolean('enabled'));
-            this._volumeScale.set_value(this._settings.get_double('volume'));
             this._beepEnableSwitch.set_active(this._settings.get_boolean('beep-enabled'));
-            this._durationEntry.set_text(this._settings.get_int('beep-duration').toString());
+            this._volumeScale.set_value(this._settings.get_double('volume'));
+            this._intervalEntry.set_text(this._settings.get_int('interval').toString());
         }
     }
 );

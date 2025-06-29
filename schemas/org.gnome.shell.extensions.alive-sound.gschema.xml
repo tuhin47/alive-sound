@@ -1,25 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist>
   <schema id="org.gnome.shell.extensions.alive-sound" path="/org/gnome/shell/extensions/alive-sound/">
-    <key name="enabled" type="b">
-      <default>false</default>
-      <summary>Enable sound generation</summary>
-      <description>Whether to generate silent sound to keep Bluetooth devices active</description>
-    </key>
-    <key name="volume" type="d">
-      <default>0.01</default>
-      <summary>Sound volume</summary>
-      <description>Volume level for the generated sound (0.0 to 1.0)</description>
-    </key>
     <key name="beep-enabled" type="b">
       <default>false</default>
       <summary>Enable notification sound</summary>
       <description>Whether to play a notification sound periodically</description>
     </key>
-    <key name="beep-duration" type="i">
-      <default>160</default>
-      <summary>Notification interval</summary>
-      <description>Interval between notification sounds in seconds</description>
+    <key name="volume" type="d">
+      <default>0.01</default>
+      <summary>Sound volume</summary>
+      <description>Volume level for the notification sound (0.0 to 1.0)</description>
+    </key>
+    <key name="interval" type="i">
+      <default>30</default>
+      <summary>Interval</summary>
+      <description>Interval between notifications in seconds</description>
     </key>
   </schema>
 </schemalist> 

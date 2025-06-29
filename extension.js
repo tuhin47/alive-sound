@@ -26,13 +26,6 @@ const AliveSoundIndicator = GObject.registerClass(
             // Add separator
             this.menu.addMenuItem(new imports.ui.popupMenu.PopupSeparatorMenuItem());
             
-            // Add Enable Sound Generation toggle
-            this._enableSoundItem = new imports.ui.popupMenu.PopupSwitchMenuItem('Enable Sound Generation', false);
-            this._enableSoundItem.connect('toggled', (item) => {
-                this._settings.set_boolean('enabled', item.state);
-            });
-            this.menu.addMenuItem(this._enableSoundItem);
-            
             // Add Enable Notification Sound toggle
             this._enableNotificationItem = new imports.ui.popupMenu.PopupSwitchMenuItem('Enable Notification Sound', false);
             this._enableNotificationItem.connect('toggled', (item) => {
@@ -41,25 +34,22 @@ const AliveSoundIndicator = GObject.registerClass(
             this.menu.addMenuItem(this._enableNotificationItem);
 
             // Connect settings changes
-            this._settings.connect('changed::enabled', () => {
-                this._enableSoundItem.setToggleState(this._settings.get_boolean('enabled'));
-            });
-            
             this._settings.connect('changed::beep-enabled', () => {
                 this._enableNotificationItem.setToggleState(this._settings.get_boolean('beep-enabled'));
-                this._updateNotificationTimer();
+                this._updateTimer();
             });
-            
-            this._settings.connect('changed::beep-duration', () => {
-                this._updateNotificationTimer();
+            this._settings.connect('changed::interval', () => {
+                this._updateTimer();
+            });
+            this._settings.connect('changed::volume', () => {
+                // No timer update needed, but could be used if needed
             });
 
-            // Initialize notification timer
-            this._notificationTimer = null;
-            this._updateNotificationTimer();
+            // Initialize timer
+            this._timer = null;
+            this._updateTimer();
             
             // Load initial states
-            this._enableSoundItem.setToggleState(this._settings.get_boolean('enabled'));
             this._enableNotificationItem.setToggleState(this._settings.get_boolean('beep-enabled'));
         }
 
@@ -106,28 +96,26 @@ const AliveSoundIndicator = GObject.registerClass(
             }
         }
 
-        _updateNotificationTimer() {
+        _updateTimer() {
             // Clear existing timer
-            if (this._notificationTimer) {
-                GLib.source_remove(this._notificationTimer);
-                this._notificationTimer = null;
+            if (this._timer) {
+                GLib.source_remove(this._timer);
+                this._timer = null;
             }
-
-            // Start new timer if notification sound is enabled
+            const interval = this._settings.get_int('interval');
             if (this._settings.get_boolean('beep-enabled')) {
-                const interval = this._settings.get_int('beep-duration');
-                // Play notification every X seconds when enabled (X = interval setting)
-                this._notificationTimer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, interval, () => {
+                // Notification mode
+                this._timer = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, interval, () => {
                     this._playNotificationSound();
-                    return true; // Continue the timer
+                    return true;
                 });
             }
         }
 
         destroy() {
-            if (this._notificationTimer) {
-                GLib.source_remove(this._notificationTimer);
-                this._notificationTimer = null;
+            if (this._timer) {
+                GLib.source_remove(this._timer);
+                this._timer = null;
             }
             super.destroy();
         }
